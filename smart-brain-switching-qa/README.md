@@ -4,7 +4,7 @@
 
 ### AI-assisted Quality Assurance for payment switching
 
-**Two production-grade platforms that cover the full QA lifecycle of a core switch — from generating the test data, to investigating failures in the live network.**
+**Two production-grade platforms that cover the full QA lifecycle of a core switch - from generating the test data, to investigating failures in the live network.**
 
 ![Full-stack](https://img.shields.io/badge/stack-full--stack-8b7bff?style=for-the-badge)
 ![Zero deps](https://img.shields.io/badge/runtime-Node.js%20zero--dependency-16100a?style=for-the-badge)
@@ -44,13 +44,13 @@ detik — dan mengeluarkan narasi solusi langsung di dashboard, lengkap dengan p
 ## Peta lifecycle
 
 ```
-   SEBELUM RILIS                                   SETELAH LIVE
- ┌───────────────────────────┐              ┌───────────────────────────┐
- │  ISO 8583 Generator       │   kode uji   │  Multi-Agent RCA          │
- │  • analisis perubahan kode │─────────────▶│  • sadap transaksi live   │
- │  • sintesis skenario      │   divalidasi │  • Agent A/B/C investigasi │
- │  • raw message + edge case │              │  • narasi akar masalah    │
- └───────────────────────────┘              └───────────────────────────┘
+   SEBELUM RILIS                                       SETELAH LIVE
+ ┌───────────────────────────┐                   ┌───────────────────────────┐
+ │  ISO 8583 Generator       │   kode uji        │  Multi-Agent RCA          │
+ │  • analisis perubahan kode│  ─────────────▶  │  • sadap transaksi live   │
+ │  • sintesis skenario      │   divalidasi      │  • Agent A/B/C investigasi│
+ │  • raw message + edge case│                   │  • narasi akar masalah    │
+ └───────────────────────────┘                   └───────────────────────────┘
         Functional / Regression QA               Performance / Production QA
 ```
 
@@ -94,7 +94,8 @@ smart-brain-switching-qa/
 
 <div align="center">
 
-**Christina Apriani** · Full-Stack Developer
+**Christina Apriani** · Full-Stack Developer Profesional
+
 *Payment switching QA · ISO 8583 · Multi-agent observability*
 
 <sub>Semua data uji sintetis. Untuk penggunaan yang sah atas sistem Anda sendiri.</sub>
