@@ -74,7 +74,7 @@ project untuk **mode DEMO** di browser.
 - **Zero dependency.** Keduanya berjalan dengan modul inti Node (`http`, `node:sqlite`). Mudah di-deploy,
   mudah diaudit, tidak ada rantai dependency.
 - **Engine bersama.** Logika inti (ISO 8583 codec, decision agents) ditulis sekali sebagai modul UMD dan dipakai
-  identik di backend dan browser — tidak pernah berbeda.
+  identik di backend dan browser - tidak pernah berbeda.
 - **Mode adaptif.** Deteksi backend otomatis: mode LIVE (SQLite + SSE) bila server aktif, mode DEMO
   (engine lokal) bila dibuka sebagai halaman statis.
 - **Data sintetis & etis.** Semua data kartu, PIN, dan transaksi bersifat uji; tidak ada data nasabah asli
@@ -93,6 +93,7 @@ smart-brain-switching-qa/
 ---
 
 <div align="center">
+
 
 **Christina Apriani** · Full-Stack Developer Profesional
 
