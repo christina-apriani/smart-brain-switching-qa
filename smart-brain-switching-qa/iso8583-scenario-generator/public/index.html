@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ISO 8583 Scenario Generator — Smart Brain Switching QA</title>
+<meta name="author" content="Christina Apriani" />
+<meta name="description" content="Autonomous ISO 8583 / QRIS scenario & test-data generator for payment-switching QA. Analyzes code changes and synthesizes boundary, negative, and edge-case test messages. Built by Christina Apriani." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ff9f1c'/%3E%3Ctext x='16' y='22' font-size='15' text-anchor='middle' fill='%231a1205' font-family='monospace' font-weight='bold'%3E83%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="brand">
+      <div class="logo">83</div>
+      <div><h1>ISO 8583 Scenario &amp; Data Generator</h1>
+        <div class="sub">SMART BRAIN SWITCHING QA · AUTONOMOUS TEST SYNTHESIS</div></div>
+    </div>
+    <div class="hstat">
+      <span class="pill" id="modePill"><span class="dot"></span><span id="modeText">connecting…</span></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs">
+    <button class="tab active" data-v="analyze">🔬 Code Analyzer</button>
+    <button class="tab" data-v="generate">⚗️ Generate Scenarios</button>
+    <button class="tab" data-v="inspect">🧾 Message Inspector</button>
+    <button class="tab" data-v="suites">📦 Saved Suites</button>
+    <button class="tab" data-v="ref">📚 Reference</button>
+  </nav>
+
+  <div class="stats">
+    <div class="stat"><div class="k" id="st_suites" style="color:var(--amber2)">0</div><div class="l">Suites Tersimpan</div></div>
+    <div class="stat"><div class="k" id="st_cases">0</div><div class="l">Total Test Case</div></div>
+    <div class="stat"><div class="k" id="st_signals" style="color:var(--info)">0</div><div class="l">Signal Terdeteksi</div></div>
+    <div class="stat"><div class="k" id="st_gen" style="color:var(--go)">0</div><div class="l">Digenerate (sesi)</div></div>
+  </div>
+
+  <!-- ANALYZE -->
+  <section class="view active" id="analyze">
+    <div class="grid cols-2b">
+      <div class="card">
+        <h2><span class="bar"></span>Source Code Analyzer</h2>
+        <p class="faint" style="font-size:12px;margin-bottom:4px">Tempel diff / potongan kode core switching. Analyzer mendeteksi perubahan logika (limit, field baru, routing, reversal, keamanan) dan merekomendasikan famili skenario.</p>
+        <label class="f">Pilih contoh perubahan</label>
+        <select class="x" id="sampleSelect"><option value="">— contoh —</option></select>
+        <label class="f">Kode / diff</label>
+        <textarea class="x code" id="codeInput" placeholder="// tempel diff kode di sini"></textarea>
+        <div class="row" style="margin-top:14px">
+          <button class="btn" id="btnAnalyze">🔬 Analisis Kode</button>
+          <button class="btn ghost sm" id="btnAnalyzeGen">Analisis + Generate</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2><span class="bar"></span>Signal Terdeteksi <span class="right" id="anSummary"></span></h2>
+        <div id="signalsPane"><div class="empty">Analisis kode untuk melihat sinyal perubahan dan famili skenario.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENERATE -->
+  <section class="view" id="generate">
+    <div class="card" style="margin-bottom:18px">
+      <h2><span class="bar"></span>Generate Manual</h2>
+      <div class="row">
+        <div><label class="f">Famili skenario</label>
+          <select class="x" id="g_family" style="width:auto"><option value="boundary">Boundary (limit)</option><option value="field_presence">Field presence (DE)</option><option value="routing">Routing (BIN)</option><option value="reversal">Reversal / auto-reversal</option><option value="security">Security (PIN/token)</option></select></div>
+        <div id="wrapLimit"><label class="f">Limit (Rp)</label><input class="x" id="g_limit" type="number" value="2000000" style="width:160px" /></div>
+        <div id="wrapDE" style="display:none"><label class="f">DE nomor</label><input class="x" id="g_de" type="number" value="62" style="width:110px" /></div>
+        <div style="align-self:flex-end"><button class="btn" id="btnGenManual">⚗️ Generate</button></div>
+        <div style="align-self:flex-end"><button class="btn ghost sm" id="btnGenPersist">Generate + Simpan</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="bar"></span>Hasil Generate <span class="right" id="genMeta"></span></h2>
+      <div id="suitesPane"><div class="empty">Generate skenario dari Code Analyzer atau panel manual di atas.</div></div>
+    </div>
+  </section>
+
+  <!-- INSPECT -->
+  <section class="view" id="inspect">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2><span class="bar"></span>Message Inspector (Cek Data)</h2>
+        <p class="faint" style="font-size:12px;margin-bottom:4px">Tempel raw ISO 8583 message untuk didekode: MTI, bitmap, dan tiap data element.</p>
+        <label class="f">Raw message</label>
+        <textarea class="x code" id="rawInput" placeholder="0200723840000000900016..." style="min-height:160px"></textarea>
+        <div class="row" style="margin-top:14px">
+          <button class="btn" id="btnParse">🧾 Decode</button>
+          <button class="btn ghost sm" id="btnSampleRaw">Isi contoh</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2><span class="bar"></span>Hasil Decode <span class="right" id="parseMeta"></span></h2>
+        <div id="parsePane"><div class="empty">Tempel message dan tekan Decode.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUITES -->
+  <section class="view" id="suites">
+    <div class="card">
+      <h2><span class="bar"></span>Suite Tersimpan <span class="right"><button class="btn ghost sm" id="btnRefreshSuites">Muat ulang</button></span></h2>
+      <div id="savedPane"><div class="empty">Belum ada suite tersimpan.</div></div>
+    </div>
+  </section>
+
+  <!-- REFERENCE -->
+  <section class="view" id="ref">
+    <div class="grid cols-2">
+      <div class="card"><h2><span class="bar"></span>Data Element Dictionary</h2><div style="overflow-x:auto;max-height:480px;overflow-y:auto"><table class="tbl" id="tblDict"></table></div></div>
+      <div>
+        <div class="card" style="margin-bottom:18px"><h2><span class="bar"></span>Message Type (MTI)</h2><div style="overflow-x:auto"><table class="tbl" id="tblMTI"></table></div></div>
+        <div class="card"><h2><span class="bar"></span>Response Codes</h2><div style="overflow-x:auto"><table class="tbl" id="tblRC"></table></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Dibangun oleh <b class="sig">Christina Apriani</b> · ISO 8583 Scenario &amp; Data Generator</div>
+    <div class="sig">Smart Brain Switching QA · synthetic test data only</div>
+  </footer>
+</div>
+<div id="toast"></div>
+
+<script src="js/iso8583.js"></script>
+<script src="js/testdata.js"></script>
+<script src="js/analyzer.js"></script>
+<script src="js/synth.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

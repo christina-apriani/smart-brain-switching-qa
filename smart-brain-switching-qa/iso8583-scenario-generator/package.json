@@ -1,0 +1,17 @@
+{
+  "name": "iso8583-scenario-generator",
+  "version": "1.0.0",
+  "description": "Autonomous ISO 8583 / QRIS scenario & test-data generator for payment-switching QA. Authored by Christina Apriani.",
+  "author": "Christina Apriani",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "server.js",
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "dev": "node --no-warnings --watch server.js",
+    "test": "node --no-warnings test/generator.test.js"
+  },
+  "keywords": ["iso8583", "qris", "qa", "test-data", "payment-switching", "scenario-generator"],
+  "dependencies": {}
+}

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multi-Agent Monitoring &amp; RCA — Smart Brain Switching QA</title>
+<meta name="author" content="Christina Apriani" />
+<meta name="description" content="Multi-agent AI monitoring & root-cause-analysis platform for payment switching: live transaction tap, anomaly detection, topology mapping, and instant RCA narratives with real-time network map. Built by Christina Apriani." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238b7bff'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%23fff' font-family='monospace' font-weight='bold'%3E%E2%97%89%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" fill="#fff"/><circle cx="5" cy="5" r="2" fill="#fff"/><circle cx="19" cy="5" r="2" fill="#fff"/><circle cx="5" cy="19" r="2" fill="#fff"/><circle cx="19" cy="19" r="2" fill="#fff"/><path d="M12 12L5 5M12 12l7-7M12 12l-7 7M12 12l7 7" stroke="#fff" stroke-width="1.3" opacity=".7"/></svg></div>
+      <div><h1>Multi-Agent Monitoring &amp; RCA</h1>
+        <div class="sub">SMART BRAIN SWITCHING QA · LIVE PERFORMANCE &amp; ROOT CAUSE</div></div>
+    </div>
+    <div class="hstat">
+      <span class="pill" id="modePill"><span class="dot"></span><span id="modeText">connecting…</span></span>
+      <span class="pill clock" id="tps">0 TPS</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs">
+    <button class="tab active" data-v="dash">📊 Dashboard</button>
+    <button class="tab" data-v="map">🗺️ Live Network Map</button>
+    <button class="tab" data-v="incidents">🚨 Incidents &amp; RCA</button>
+    <button class="tab" data-v="control">🎛️ Fault Injection</button>
+  </nav>
+
+  <div class="stats">
+    <div class="stat"><div class="k" id="st_tps" style="color:var(--cyan)">0</div><div class="l">Transaksi / tick</div></div>
+    <div class="stat"><div class="k" id="st_err" style="color:var(--stop)">0%</div><div class="l">Error Rate</div></div>
+    <div class="stat"><div class="k" id="st_inc" style="color:var(--warn)">0</div><div class="l">Insiden Terbuka</div></div>
+    <div class="stat"><div class="k" id="st_health" style="color:var(--go)">—</div><div class="l">Node Sehat</div></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <section class="view active" id="dash">
+    <div class="grid cols-2b">
+      <div class="card">
+        <h2><span class="bar"></span>Live Transaksi &amp; Error Rate <span class="right" id="chartMeta"></span></h2>
+        <svg class="chart" id="chart" viewBox="0 0 700 170" preserveAspectRatio="none"></svg>
+        <div class="legend"><span><i class="dot3" style="background:var(--cyan)"></i>transaksi/tick</span><span><i class="dot3" style="background:var(--stop)"></i>error rate</span></div>
+      </div>
+      <div class="card">
+        <h2><span class="bar"></span>Breakdown Response Code</h2>
+        <div id="rcBars"></div>
+      </div>
+    </div>
+
+    <div class="grid cols-3" style="margin-top:18px">
+      <div class="agent a">
+        <div class="ah"><div class="ab">🔎</div><div><div class="an">Agent-A</div><div class="ad">Log Anomaly Detector</div></div><span class="astate idle" id="aA">idle</span></div>
+        <div class="abody" id="bodyA">Memantau pola error rate (EWMA + z-score) per node…</div>
+      </div>
+      <div class="agent b">
+        <div class="ah"><div class="ab">🗺️</div><div><div class="an">Agent-B</div><div class="ad">Topology Mapper</div></div><span class="astate idle" id="aB">idle</span></div>
+        <div class="abody" id="bodyB">Memeriksa CPU, memori, latensi, dan antrean HSM…</div>
+      </div>
+      <div class="agent c">
+        <div class="ah"><div class="ab">🧠</div><div><div class="an">Agent-C</div><div class="ad">Investigator</div></div><span class="astate idle" id="aC">idle</span></div>
+        <div class="abody" id="bodyC">Menunggu temuan dari Agent-A &amp; Agent-B…</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2><span class="bar"></span>Live Stream (contoh transaksi error)</h2>
+      <div class="ticker" id="ticker"><div class="empty">Menyadap aliran transaksi…</div></div>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="view" id="map-view">
+    <div class="card">
+      <h2><span class="bar"></span>Peta Jaringan Interbank Real-Time <span class="right" id="mapMeta"></span></h2>
+      <div id="map"></div>
+      <div class="map-legend">
+        <span><i class="dotc" style="background:#8b7bff"></i> Core Switch (pusat)</span>
+        <span><i class="dotc" style="background:#2ee6a0"></i> Bank sehat</span>
+        <span><i class="dotc" style="background:#ffb020"></i> Bank terbebani</span>
+        <span><i class="dotc" style="background:#ff4d6d"></i> Bank bermasalah</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INCIDENTS -->
+  <section class="view" id="incidents">
+    <div class="card">
+      <h2><span class="bar"></span>Incident Feed &amp; Root Cause Analysis <span class="right"><button class="btn ghost sm" id="btnRefreshInc">Muat ulang</button></span></h2>
+      <div id="incPane"><div class="empty">Belum ada insiden. Injeksikan fault untuk melihat investigasi multi-agent.</div></div>
+    </div>
+  </section>
+
+  <!-- CONTROL -->
+  <section class="view" id="control">
+    <div class="grid cols-2">
+      <div class="card">
+        <h2><span class="bar"></span>Injeksi Gangguan (untuk pengujian)</h2>
+        <p class="faint" style="font-size:12px;margin-bottom:4px">Rekayasa kondisi produksi untuk menguji respons agen: lonjakan timeout, malfunction, atau memori penuh pada bank tujuan.</p>
+        <label class="f" style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:13px 0 6px">Bank tujuan</label>
+        <select class="x" id="c_node" style="width:100%"></select>
+        <div class="row" style="margin-top:12px">
+          <div style="flex:1"><label class="f" style="display:block;font-size:11px;color:var(--muted);margin-bottom:6px">Jenis gangguan</label>
+            <select class="x" id="c_type" style="width:100%"><option value="memory">Memori penuh → RC 68</option><option value="timeout">Timeout storm → RC 68</option><option value="malfunction">System malfunction → RC 91/96</option><option value="cpu">CPU saturation</option></select></div>
+          <div style="width:140px"><label class="f" style="display:block;font-size:11px;color:var(--muted);margin-bottom:6px">Magnitude</label>
+            <select class="x" id="c_mag" style="width:100%"><option value="0.08">ringan (8%)</option><option value="0.14" selected>sedang (14%)</option><option value="0.25">parah (25%)</option></select></div>
+        </div>
+        <div class="row" style="margin-top:16px">
+          <button class="btn danger" id="btnInject">⚠ Injeksikan Gangguan</button>
+          <button class="btn ghost" id="btnClear">Pulihkan Semua</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2><span class="bar"></span>Status Node Live</h2>
+        <div id="nodeStatus"><div class="empty">Memuat…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Dibangun oleh <b class="sig">Christina Apriani</b> · Multi-Agent Monitoring &amp; RCA Platform</div>
+    <div class="sig">Agent-A anomaly · Agent-B topology · Agent-C investigator</div>
+  </footer>
+</div>
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/topology.js"></script>
+<script src="js/simulator.js"></script>
+<script src="js/agents.js"></script>
+<script src="js/api.js"></script>
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

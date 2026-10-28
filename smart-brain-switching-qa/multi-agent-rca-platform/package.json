@@ -1,0 +1,17 @@
+{
+  "name": "multi-agent-rca-platform",
+  "version": "1.0.0",
+  "description": "Multi-agent AI monitoring & root-cause-analysis platform for payment switching. Live transaction tap, three cooperating agents, and instant RCA narratives. Authored by Christina Apriani.",
+  "author": "Christina Apriani",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "server.js",
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "dev": "node --no-warnings --watch server.js",
+    "test": "node --no-warnings test/agents.test.js"
+  },
+  "keywords": ["monitoring", "rca", "multi-agent", "anomaly-detection", "payment-switching", "observability"],
+  "dependencies": {}
+}
